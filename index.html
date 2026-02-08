@@ -115,57 +115,6 @@
         background: rgba(255, 255, 255, 0.12);
       }
 
-      footer {
-        text-align: center;
-        color: rgba(255, 255, 255, 0.75);
-        font-size: 12px;
-        letter-spacing: 0.04em;
-        margin-top: 24px;
-      }
-
-      .login-gate {
-        position: fixed;
-        inset: 0;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        background: rgba(0, 3, 40, 0.8);
-        backdrop-filter: blur(6px);
-        z-index: 10000;
-        padding: 24px;
-      }
-
-      .login-card {
-        background: #fff;
-        color: var(--ink);
-        border-radius: 18px;
-        padding: 24px;
-        width: min(420px, 100%);
-        text-align: center;
-        box-shadow: 0 20px 50px -30px rgba(15, 23, 42, 0.5);
-      }
-
-      .login-card h2 {
-        margin: 0 0 8px;
-      }
-
-      .login-card p {
-        margin: 0 0 16px;
-        color: var(--muted);
-        font-size: 14px;
-      }
-
-      .login-card button {
-        border: none;
-        border-radius: 999px;
-        padding: 10px 18px;
-        background: var(--accent);
-        color: #fff;
-        font-weight: 600;
-        cursor: pointer;
-      }
-
-
       header h1 {
         margin: 0;
         font-size: clamp(32px, 4.8vw, 54px);
@@ -227,6 +176,95 @@
         font-size: 12px;
         color: var(--muted);
         margin-top: 8px;
+      }
+
+      .task-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 12px;
+      }
+
+      .task-header h2 {
+        margin: 0;
+      }
+
+      .mini-progress {
+        display: grid;
+        justify-items: center;
+        gap: 6px;
+        min-width: 120px;
+      }
+
+      .mini-ring {
+        width: 70px;
+        height: 70px;
+        position: relative;
+      }
+
+      .mini-ring svg {
+        transform: rotate(-90deg);
+      }
+
+      .mini-ring-value {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+
+      .mini-summary {
+        font-size: 11px;
+        color: var(--muted);
+        text-align: center;
+      }
+
+      .xp-card {
+        display: grid;
+        gap: 10px;
+        text-align: left;
+      }
+
+      .xp-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+      }
+
+      .xp-level {
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .xp-points {
+        font-size: 14px;
+        color: var(--muted);
+      }
+
+      .xp-bar {
+        width: 100%;
+        height: 12px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.12);
+        overflow: hidden;
+      }
+
+      .xp-fill {
+        height: 100%;
+        width: 0%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #10b981, #45caff);
+        transition: width 0.3s ease;
+      }
+
+      .xp-note {
+        font-size: 12px;
+        color: var(--muted);
       }
 
       .add-task {
@@ -659,58 +697,6 @@
         cursor: not-allowed;
       }
 
-      .progress-card {
-        display: grid;
-        gap: 16px;
-        text-align: center;
-        align-content: start;
-      }
-
-      .task-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        margin-bottom: 12px;
-      }
-
-      .task-header h2 {
-        margin: 0;
-      }
-
-      .mini-progress {
-        display: grid;
-        justify-items: center;
-        gap: 6px;
-        min-width: 120px;
-      }
-
-      .mini-ring {
-        width: 70px;
-        height: 70px;
-        position: relative;
-      }
-
-      .mini-ring svg {
-        transform: rotate(-90deg);
-      }
-
-      .mini-ring-value {
-        position: absolute;
-        inset: 0;
-        display: grid;
-        place-items: center;
-        font-size: 14px;
-        font-weight: 700;
-        color: var(--ink);
-      }
-
-      .mini-summary {
-        font-size: 11px;
-        color: var(--muted);
-        text-align: center;
-      }
-
       .timer-card {
         display: grid;
         gap: 14px;
@@ -776,83 +762,6 @@
         height: 18px;
       }
 
-      .progress-ring {
-        width: 190px;
-        height: 190px;
-        margin: 0 auto;
-        position: relative;
-      }
-
-      .progress-ring svg {
-        transform: rotate(-90deg);
-      }
-
-      .progress-value {
-        position: absolute;
-        inset: 0;
-        display: grid;
-        place-items: center;
-        font-size: 28px;
-        font-weight: 700;
-        color: var(--ink);
-      }
-
-      .progress-subtitle {
-        color: var(--muted);
-        font-size: 14px;
-      }
-
-      .summary {
-        display: flex;
-        justify-content: space-between;
-        font-size: 14px;
-        color: var(--muted);
-      }
-
-      .xp-card {
-        display: grid;
-        gap: 10px;
-        text-align: left;
-      }
-
-      .xp-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        gap: 12px;
-      }
-
-      .xp-level {
-        font-size: 18px;
-        font-weight: 600;
-      }
-
-      .xp-points {
-        font-size: 14px;
-        color: var(--muted);
-      }
-
-      .xp-bar {
-        width: 100%;
-        height: 12px;
-        border-radius: 999px;
-        background: rgba(15, 23, 42, 0.12);
-        overflow: hidden;
-      }
-
-      .xp-fill {
-        height: 100%;
-        width: 0%;
-        border-radius: inherit;
-        background: linear-gradient(90deg, #10b981, #45caff);
-        transition: width 0.3s ease;
-      }
-
-      .xp-note {
-        font-size: 12px;
-        color: var(--muted);
-      }
-
       .video-card {
         display: grid;
         gap: 12px;
@@ -904,15 +813,54 @@
         text-align: center;
       }
 
-      .badge {
-        padding: 6px 12px;
-        border-radius: 999px;
-        background: rgba(255, 27, 107, 0.15);
-        color: #b1114c;
+      footer {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.75);
         font-size: 12px;
+        letter-spacing: 0.04em;
+        margin-top: 24px;
+      }
+
+      .login-gate {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 3, 40, 0.8);
+        backdrop-filter: blur(6px);
+        z-index: 10000;
+        padding: 24px;
+      }
+
+      .login-card {
+        background: #fff;
+        color: var(--ink);
+        border-radius: 18px;
+        padding: 24px;
+        width: min(420px, 100%);
+        text-align: center;
+        box-shadow: 0 20px 50px -30px rgba(15, 23, 42, 0.5);
+      }
+
+      .login-card h2 {
+        margin: 0 0 8px;
+      }
+
+      .login-card p {
+        margin: 0 0 16px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .login-card button {
+        border: none;
+        border-radius: 999px;
+        padding: 10px 18px;
+        background: var(--accent);
+        color: #fff;
         font-weight: 600;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
+        cursor: pointer;
       }
 
       @media (max-width: 1100px) {
@@ -1171,6 +1119,14 @@
       </footer>
     </div>
 
+    <div class="login-gate" id="loginGate">
+      <div class="login-card">
+        <h2>Welcome</h2>
+        <p>Please log in to access your dashboard.</p>
+        <button id="loginBtn" type="button">Log In</button>
+      </div>
+    </div>
+
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script>
       const taskNameInput = document.getElementById("taskName");
@@ -1212,6 +1168,8 @@
       const habitMiniProgressValue = document.getElementById("habitMiniProgressValue");
       const habitMiniSummary = document.getElementById("habitMiniSummary");
       const logoutBtn = document.getElementById("logoutBtn");
+      const loginGate = document.getElementById("loginGate");
+      const loginBtn = document.getElementById("loginBtn");
 
       const storageKey = "taskTrackerList";
 
@@ -1265,11 +1223,7 @@
         const filled = total ? (circumference * percent) / 100 : 0;
         miniProgressCircle.setAttribute("stroke-dasharray", `${filled} ${circumference - filled}`);
         miniProgressValue.textContent = `${percent}%`;
-        miniSummary.textContent = `${completed} / ${total} done`;
-
-        if (!total) {
-          miniSummary.textContent = "No tasks yet";
-        }
+        miniSummary.textContent = total ? `${completed} / ${total} done` : "No tasks yet";
 
         const xpPerTask = 0.2;
         const historyCompleted = getHistoryCompleted();
@@ -1281,7 +1235,7 @@
         levelLabel.textContent = `Level ${level}`;
         xpLabel.textContent = `${totalXp.toFixed(1)} XP`;
         xpFill.style.width = `${levelPercent}%`;
-        xpNote.textContent = ` ${progressIntoLevel.toFixed(1)} / 10 XP to level up`;
+        xpNote.textContent = `${progressIntoLevel.toFixed(1)} / 10 XP to level up`;
       };
 
       const renderHistory = () => {
@@ -1360,10 +1314,9 @@
           year: "numeric"
         });
 
-        const allTasks = [
-          ...tasks,
-          ...history.flatMap((entry) => entry.tasks || [])
-        ].filter((task) => task.dateStarted);
+        const allTasks = [...tasks, ...history.flatMap((entry) => entry.tasks || [])].filter(
+          (task) => task.dateStarted
+        );
 
         const taskMap = new Map();
         allTasks.forEach((task) => {
@@ -1704,51 +1657,6 @@
         }));
       };
 
-      const renderHabitYearCalendar = (statusMap) => {
-        const now = new Date();
-        const year = now.getFullYear();
-        habitCalendarTitle.textContent = `${year}`;
-        habitCalendarGrid.innerHTML = "";
-
-        for (let month = 0; month < 12; month += 1) {
-          const monthBlock = document.createElement("div");
-          monthBlock.className = "month-block";
-
-          const title = document.createElement("div");
-          title.className = "month-title";
-          title.textContent = new Date(year, month, 1).toLocaleDateString(undefined, {
-            month: "short"
-          });
-          monthBlock.appendChild(title);
-
-          const grid = document.createElement("div");
-          grid.className = "month-grid";
-
-          const firstDay = new Date(year, month, 1);
-          const lastDay = new Date(year, month + 1, 0);
-          const startWeekday = (firstDay.getDay() + 6) % 7;
-          const totalDays = lastDay.getDate();
-
-          for (let i = 0; i < startWeekday; i += 1) {
-            const blank = document.createElement("div");
-            grid.appendChild(blank);
-          }
-
-          for (let day = 1; day <= totalDays; day += 1) {
-            const dot = document.createElement("div");
-            dot.className = "month-dot";
-            const dateKey = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-            if (statusMap.has(dateKey)) {
-              dot.classList.add(statusMap.get(dateKey));
-            }
-            grid.appendChild(dot);
-          }
-
-          monthBlock.appendChild(grid);
-          habitCalendarGrid.appendChild(monthBlock);
-        }
-      };
-
       const getWeekDates = () => {
         const weekStart = new Date();
         const dayIndex = (weekStart.getDay() + 6) % 7;
@@ -1803,6 +1711,51 @@
         renderHabitYearCalendar(statusMap);
       };
 
+      const renderHabitYearCalendar = (statusMap) => {
+        const now = new Date();
+        const year = now.getFullYear();
+        habitCalendarTitle.textContent = `${year}`;
+        habitCalendarGrid.innerHTML = "";
+
+        for (let month = 0; month < 12; month += 1) {
+          const monthBlock = document.createElement("div");
+          monthBlock.className = "month-block";
+
+          const title = document.createElement("div");
+          title.className = "month-title";
+          title.textContent = new Date(year, month, 1).toLocaleDateString(undefined, {
+            month: "short"
+          });
+          monthBlock.appendChild(title);
+
+          const grid = document.createElement("div");
+          grid.className = "month-grid";
+
+          const firstDay = new Date(year, month, 1);
+          const lastDay = new Date(year, month + 1, 0);
+          const startWeekday = (firstDay.getDay() + 6) % 7;
+          const totalDays = lastDay.getDate();
+
+          for (let i = 0; i < startWeekday; i += 1) {
+            const blank = document.createElement("div");
+            grid.appendChild(blank);
+          }
+
+          for (let day = 1; day <= totalDays; day += 1) {
+            const dot = document.createElement("div");
+            dot.className = "month-dot";
+            const dateKey = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+            if (statusMap.has(dateKey)) {
+              dot.classList.add(statusMap.get(dateKey));
+            }
+            grid.appendChild(dot);
+          }
+
+          monthBlock.appendChild(grid);
+          habitCalendarGrid.appendChild(monthBlock);
+        }
+      };
+
       const renderHabits = () => {
         if (!habitContainer) return;
         ensureHabitSlots();
@@ -1824,7 +1777,7 @@
             .join("");
         habitContainer.appendChild(datesRow);
 
-        habits.forEach((habit, index) => {
+        habits.forEach((habit) => {
           const row = document.createElement("div");
           row.className = "habit-row";
 
@@ -1843,7 +1796,6 @@
           habit.checks.forEach((checked, dayIndex) => {
             const dot = document.createElement("button");
             dot.type = "button";
-            const dayDate = weekDates[dayIndex];
             dot.className = `habit-dot${checked ? " done" : ""}`;
             dot.setAttribute("aria-label", "Toggle habit");
             dot.addEventListener("click", () => {
@@ -1926,20 +1878,54 @@
         showPage(next);
       });
 
-      const redirectToLogin = () => {
-        const hash = window.location.hash || "";
-        window.location.href = `/login${hash}`;
-      };
+      if (window.netlifyIdentity) {
+        const showGate = () => {
+          loginGate.style.display = "flex";
+          document.body.style.overflow = "hidden";
+        };
 
-      logoutBtn.addEventListener("click", async () => {
-        try {
-          await fetch("/.netlify/identity/logout", { method: "POST", credentials: "include" });
-        } catch (err) {
-          // ignore
-        }
-        redirectToLogin();
-      });
+        const hideGate = () => {
+          loginGate.style.display = "none";
+          document.body.style.overflow = "";
+        };
 
+        window.netlifyIdentity.on("init", (user) => {
+          if (user) {
+            hideGate();
+          } else {
+            showGate();
+          }
+        });
+
+        window.netlifyIdentity.on("login", () => {
+          hideGate();
+          window.netlifyIdentity.close();
+          if (window.location.hash) {
+            history.replaceState(null, "", window.location.pathname);
+          }
+        });
+
+        window.netlifyIdentity.on("logout", () => {
+          showGate();
+        });
+
+        window.netlifyIdentity.on("close", () => {
+          if (!window.netlifyIdentity.currentUser()) {
+            showGate();
+          }
+        });
+
+        loginBtn.addEventListener("click", () => {
+          hideGate();
+          window.netlifyIdentity.open("login");
+        });
+
+        logoutBtn.addEventListener("click", () => {
+          window.netlifyIdentity.logout();
+        });
+
+        window.netlifyIdentity.init();
+      }
 
       youtubeSaveBtn.addEventListener("click", updateYouTube);
       youtubeInput.addEventListener("keydown", (event) => {
