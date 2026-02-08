@@ -1931,25 +1931,9 @@
         window.location.href = `/login${hash}`;
       };
 
-      const requireAuth = async () => {
-        try {
-          const response = await fetch("/.netlify/identity/user", {
-            credentials: "include"
-          });
-          if (!response.ok) {
-            redirectToLogin();
-          }
-        } catch (err) {
-          redirectToLogin();
-        }
-      };
-
-      requireAuth();
-
       logoutBtn.addEventListener("click", async () => {
         try {
           await fetch("/.netlify/identity/logout", { method: "POST", credentials: "include" });
-          await fetch("/.netlify/functions/clear-cookie", { method: "POST" });
         } catch (err) {
           // ignore
         }
