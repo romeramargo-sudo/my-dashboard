@@ -340,23 +340,23 @@
       }
 
       .priority-low td {
-        background: rgba(111, 207, 151, 0.2);
+        background: #6fcf97;
       }
 
       .priority-normal td {
-        background: rgba(47, 128, 237, 0.18);
+        background: #2f80ed;
       }
 
       .priority-priority td {
-        background: rgba(242, 201, 76, 0.24);
+        background: #f2c94c;
       }
 
       .priority-high td {
-        background: rgba(242, 153, 74, 0.22);
+        background: #f2994a;
       }
 
       .priority-urgent td {
-        background: rgba(235, 87, 87, 0.2);
+        background: #eb5757;
       }
 
       .task-table th:nth-child(1),
@@ -1036,8 +1036,8 @@
               </button>
             </div>
             <div class="help-text">
-              Starting the timer means you’ll need to focus on a task. You can pause if the Shopee
-              delivery calls you.
+              Challenge yourself to work without distractions. Set a 30-minute timer and see if you
+              can go the whole session without using your smartphone or any other distractions.
             </div>
           </div>
 
@@ -1653,6 +1653,7 @@
         habits = Array.from({ length: 10 }, () => ({
           id: crypto.randomUUID(),
           name: "",
+          startDate: "",
           checks: Array.from({ length: 7 }, () => false)
         }));
       };
@@ -1675,7 +1676,11 @@
         const todayStart = new Date();
         todayStart.setHours(0, 0, 0, 0);
         weekDates.forEach((date, idx) => {
-          const namedHabits = habits.filter((habit) => habit.name.trim());
+          const namedHabits = habits.filter((habit) => {
+            if (!habit.name.trim() || !habit.startDate) return false;
+            const start = new Date(habit.startDate);
+            return start.getTime() <= date.getTime();
+          });
           if (!namedHabits.length) return;
           if (date.getTime() > todayStart.getTime()) return;
           const allDone = namedHabits.every((habit) => habit.checks[idx]);
@@ -1683,11 +1688,20 @@
         });
 
         const namedHabits = habits.filter((habit) => habit.name.trim());
-        const totalChecks = namedHabits.length * 7;
-        const completedChecks = namedHabits.reduce(
-          (sum, habit) => sum + habit.checks.filter(Boolean).length,
-          0
-        );
+        const totalChecks = namedHabits.reduce((sum, habit) => {
+          if (!habit.startDate) return sum;
+          const start = new Date(habit.startDate);
+          return sum + weekDates.filter((date) => date.getTime() >= start.getTime()).length;
+        }, 0);
+        const completedChecks = namedHabits.reduce((sum, habit) => {
+          if (!habit.startDate) return sum;
+          const start = new Date(habit.startDate);
+          const eligibleIndexes = weekDates
+            .map((date, idx) => (date.getTime() >= start.getTime() ? idx : -1))
+            .filter((idx) => idx >= 0);
+          const count = eligibleIndexes.reduce((acc, idx) => acc + (habit.checks[idx] ? 1 : 0), 0);
+          return sum + count;
+        }, 0);
         const percent = totalChecks ? Math.round((completedChecks / totalChecks) * 100) : 0;
         const circumference = 2 * Math.PI * 28;
         const filled = totalChecks ? (circumference * percent) / 100 : 0;
@@ -1787,6 +1801,11 @@
           input.value = habit.name;
           input.addEventListener("input", () => {
             habit.name = input.value;
+            if (habit.name.trim() && !habit.startDate) {
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
+              habit.startDate = today.toISOString().slice(0, 10);
+            }
             saveState();
             updateRowState();
             updateHabitMetrics();
@@ -1814,10 +1833,12 @@
               const dayDate = weekDates[idx];
               const isPast = dayDate && dayDate.getTime() < todayStart.getTime();
               const checked = habit.checks[idx];
-              const isMissed = habit.name.trim() && !checked && isPast;
+              const start = habit.startDate ? new Date(habit.startDate) : null;
+              const isBeforeStart = start ? dayDate.getTime() < start.getTime() : true;
+              const isMissed = habit.name.trim() && !checked && isPast && !isBeforeStart;
               dot.classList.toggle("done", checked);
               dot.classList.toggle("missed", isMissed);
-              dot.disabled = !habit.name.trim();
+              dot.disabled = !habit.name.trim() || isBeforeStart;
             });
           };
 
