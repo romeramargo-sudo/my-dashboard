@@ -1,0 +1,1976 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My Dashboard</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+      :root {
+        --bg-left: #000328;
+        --bg-right: #00458e;
+        --card: rgba(255, 255, 255, 0.92);
+        --card-strong: #ffffff;
+        --ink: #0f172a;
+        --muted: #475569;
+        --line: rgba(15, 23, 42, 0.12);
+        --accent: #00458e;
+        --accent-2: #00458e;
+        --success: #10b981;
+        --shadow: rgba(15, 23, 42, 0.18);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Poppins", system-ui, -apple-system, sans-serif;
+        color: var(--ink);
+        background: linear-gradient(90deg, var(--bg-left), var(--bg-right));
+        min-height: 100vh;
+        padding: 0;
+      }
+
+      .app {
+        width: min(1100px, 100%);
+        margin: 0 auto;
+        display: grid;
+        gap: 18px;
+        padding: 56px 18px 48px;
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+      }
+
+      .hero {
+        position: relative;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        color: #fff;
+        padding: 40px 20px;
+        overflow: hidden;
+      }
+
+      .hero-inner {
+        position: relative;
+        z-index: 1;
+        max-width: 980px;
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(36px, 5.2vw, 72px);
+        font-weight: 700;
+        line-height: 1.2;
+        text-shadow: 0 10px 30px rgba(15, 23, 42, 0.25);
+      }
+
+      .hero-hint {
+        margin-top: 18px;
+        font-size: 12px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        opacity: 0.85;
+      }
+
+      .hero-hidden .hero {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        color: #fff;
+      }
+
+      .nav {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .nav button {
+        border: none;
+        border-radius: 999px;
+        padding: 8px 16px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        backdrop-filter: blur(6px);
+      }
+
+      .nav button.secondary {
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      footer {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        margin-top: 24px;
+      }
+
+      .login-gate {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 3, 40, 0.8);
+        backdrop-filter: blur(6px);
+        z-index: 10000;
+        padding: 24px;
+      }
+
+      .login-card {
+        background: #fff;
+        color: var(--ink);
+        border-radius: 18px;
+        padding: 24px;
+        width: min(420px, 100%);
+        text-align: center;
+        box-shadow: 0 20px 50px -30px rgba(15, 23, 42, 0.5);
+      }
+
+      .login-card h2 {
+        margin: 0 0 8px;
+      }
+
+      .login-card p {
+        margin: 0 0 16px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .login-card button {
+        border: none;
+        border-radius: 999px;
+        padding: 10px 18px;
+        background: var(--accent);
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+
+      header h1 {
+        margin: 0;
+        font-size: clamp(32px, 4.8vw, 54px);
+        font-weight: 700;
+      }
+
+      header p {
+        margin: 6px 0 0;
+        font-weight: 300;
+        opacity: 0.92;
+      }
+
+      .tracker {
+        display: grid;
+        grid-template-columns: minmax(0, 1.6fr) minmax(260px, 0.8fr);
+        gap: 16px;
+      }
+
+      #habitPage.tracker {
+        grid-template-columns: minmax(0, 1fr) 280px;
+        gap: 8px;
+        align-items: start;
+      }
+
+      .left-stack {
+        display: grid;
+        gap: 16px;
+        align-content: start;
+      }
+
+      .bottom-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 320px;
+        gap: 16px;
+        align-items: start;
+      }
+
+      .progress-stack {
+        display: grid;
+        gap: 16px;
+        align-content: start;
+      }
+
+      .card {
+        background: var(--card);
+        border-radius: 20px;
+        padding: 16px;
+        box-shadow: 0 18px 40px -26px var(--shadow);
+        backdrop-filter: blur(8px);
+      }
+
+      .card h2 {
+        margin: 0 0 16px;
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .help-text {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 8px;
+      }
+
+      .add-task {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .add-task label {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--muted);
+      }
+
+      .add-task input {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 12px;
+        font: inherit;
+        background: #fff;
+      }
+
+      .add-task button {
+        border: none;
+        border-radius: 12px;
+        padding: 12px 16px;
+        background: var(--accent);
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 12px 24px -16px rgba(15, 23, 42, 0.5);
+      }
+
+      .add-task button:active {
+        transform: translateY(1px) scale(0.99);
+      }
+
+      .task-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+        table-layout: fixed;
+      }
+
+      .task-table th {
+        text-align: left;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        padding: 0 10px 6px;
+      }
+
+      .task-table td {
+        background: var(--card-strong);
+        padding: 12px 10px;
+        font-size: 14px;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+
+      .task-table tr td:first-child {
+        border-left: 1px solid var(--line);
+        border-radius: 12px 0 0 12px;
+      }
+
+      .task-table tr td:last-child {
+        border-right: 1px solid var(--line);
+        border-radius: 0 12px 12px 0;
+      }
+
+      .priority-low td {
+        background: rgba(111, 207, 151, 0.2);
+      }
+
+      .priority-normal td {
+        background: rgba(47, 128, 237, 0.18);
+      }
+
+      .priority-priority td {
+        background: rgba(242, 201, 76, 0.24);
+      }
+
+      .priority-high td {
+        background: rgba(242, 153, 74, 0.22);
+      }
+
+      .priority-urgent td {
+        background: rgba(235, 87, 87, 0.2);
+      }
+
+      .task-table th:nth-child(1),
+      .task-table td:nth-child(1) {
+        width: 36%;
+      }
+
+      .task-table th:nth-child(2),
+      .task-table td:nth-child(2),
+      .task-table th:nth-child(4),
+      .task-table td:nth-child(4) {
+        width: 19%;
+      }
+
+      .task-table th:nth-child(3),
+      .task-table td:nth-child(3) {
+        width: 14%;
+      }
+
+      .task-table th:nth-child(5),
+      .task-table td:nth-child(5) {
+        width: 10%;
+        text-align: center;
+      }
+
+      .task-name {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .task-name input[type="checkbox"] {
+        accent-color: var(--accent);
+        cursor: pointer;
+      }
+
+      .task-name.completed span {
+        text-decoration: line-through;
+        opacity: 0.7;
+      }
+
+      .task-name span {
+        flex: 1;
+        min-width: 0;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
+
+      select,
+      .task-table input[type="date"] {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 6px 8px;
+        font: inherit;
+        background: #fff;
+        font-size: 13px;
+      }
+
+      .delete-btn {
+        border: none;
+        background: rgba(255, 27, 107, 0.15);
+        color: #b1114c;
+        width: 36px;
+        height: 36px;
+        display: grid;
+        place-items: center;
+        border-radius: 10px;
+        cursor: pointer;
+        margin: 0 auto;
+      }
+
+      .delete-btn svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .empty {
+        padding: 16px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.65);
+        color: var(--muted);
+        font-size: 14px;
+        text-align: center;
+      }
+
+      .history {
+        display: grid;
+        gap: 12px;
+      }
+
+      .history h3 {
+        margin: 0;
+        font-size: 14px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .history-item {
+        background: rgba(15, 23, 42, 0.04);
+        border-radius: 12px;
+        padding: 12px 14px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .history-item summary {
+        cursor: pointer;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .history-meta {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .history-list {
+        margin: 0;
+        padding-left: 18px;
+        font-size: 13px;
+        color: var(--ink);
+        display: grid;
+        gap: 6px;
+      }
+
+      .history-actions {
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .history-delete {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: rgba(255, 27, 107, 0.15);
+        color: #b1114c;
+        border: none;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+      }
+
+      .history-delete svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .calendar {
+        display: grid;
+        gap: 12px;
+      }
+
+      .habit-calendar {
+        max-width: 280px;
+        width: 100%;
+        justify-self: stretch;
+      }
+
+      .calendar-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .calendar-title {
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 10px;
+        align-items: center;
+      }
+
+      .calendar-weekday {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        text-align: center;
+      }
+
+      .calendar-cell {
+        display: grid;
+        place-items: center;
+      }
+
+      .calendar-dot {
+        width: 18px;
+        height: 18px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.12);
+        border: 2px solid rgba(15, 23, 42, 0.08);
+        transition: transform 0.2s ease;
+      }
+
+      .calendar-dot.has-tasks {
+        border-color: rgba(15, 23, 42, 0.15);
+      }
+
+      .calendar-dot.done {
+        background: rgba(16, 185, 129, 0.85);
+        border-color: rgba(16, 185, 129, 1);
+      }
+
+      .calendar-dot.missed {
+        background: rgba(239, 68, 68, 0.85);
+        border-color: rgba(239, 68, 68, 1);
+      }
+
+      .habit-calendar .calendar-grid {
+        gap: 8px;
+      }
+
+      .habit-calendar .calendar-dot {
+        width: 14px;
+        height: 14px;
+        border-width: 1.5px;
+      }
+
+      .year-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .month-block {
+        display: grid;
+        gap: 6px;
+      }
+
+      .month-title {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .month-grid {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 4px;
+      }
+
+      .month-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgba(15, 23, 42, 0.1);
+        border: 1px solid rgba(15, 23, 42, 0.1);
+      }
+
+      .month-dot.done {
+        background: rgba(16, 185, 129, 0.9);
+        border-color: rgba(16, 185, 129, 1);
+      }
+
+      .month-dot.missed {
+        background: rgba(239, 68, 68, 0.85);
+        border-color: rgba(239, 68, 68, 1);
+      }
+
+      .habit-grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .habit-head,
+      .habit-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) repeat(7, 36px);
+        align-items: center;
+        gap: 10px;
+      }
+
+      .habit-head {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+      }
+
+      .habit-date {
+        font-size: 10px;
+        color: var(--muted);
+        text-transform: none;
+        letter-spacing: 0;
+        text-align: center;
+      }
+
+      .habit-row {
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 8px 10px;
+      }
+
+      .habit-row input {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 8px 10px;
+        font: inherit;
+        background: #fff;
+      }
+
+      .habit-dot {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 2px solid rgba(15, 23, 42, 0.18);
+        background: rgba(15, 23, 42, 0.08);
+        cursor: pointer;
+        transition: transform 0.15s ease, background 0.15s ease;
+      }
+
+      .habit-dot.done {
+        background: rgba(16, 185, 129, 0.9);
+        border-color: rgba(16, 185, 129, 1);
+      }
+
+      .habit-dot.missed {
+        background: rgba(239, 68, 68, 0.85);
+        border-color: rgba(239, 68, 68, 1);
+      }
+
+      .habit-dot:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .progress-card {
+        display: grid;
+        gap: 16px;
+        text-align: center;
+        align-content: start;
+      }
+
+      .task-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 12px;
+      }
+
+      .task-header h2 {
+        margin: 0;
+      }
+
+      .mini-progress {
+        display: grid;
+        justify-items: center;
+        gap: 6px;
+        min-width: 120px;
+      }
+
+      .mini-ring {
+        width: 70px;
+        height: 70px;
+        position: relative;
+      }
+
+      .mini-ring svg {
+        transform: rotate(-90deg);
+      }
+
+      .mini-ring-value {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+
+      .mini-summary {
+        font-size: 11px;
+        color: var(--muted);
+        text-align: center;
+      }
+
+      .timer-card {
+        display: grid;
+        gap: 14px;
+        text-align: center;
+        align-content: start;
+      }
+
+      .timer-display {
+        font-size: 48px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+      }
+
+      .timer-adjust {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .timer-adjust button {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 8px 10px;
+        background: #fff;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .timer-controls {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .timer-controls button {
+        border: none;
+        border-radius: 12px;
+        padding: 10px 14px;
+        background: var(--accent-2);
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .timer-controls button.secondary {
+        background: rgba(15, 23, 42, 0.1);
+        color: var(--ink);
+      }
+
+      .timer-icon {
+        width: 44px;
+        height: 44px;
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+        background: rgba(15, 23, 42, 0.08);
+        color: var(--ink);
+      }
+
+      .timer-icon svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .progress-ring {
+        width: 190px;
+        height: 190px;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      .progress-ring svg {
+        transform: rotate(-90deg);
+      }
+
+      .progress-value {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+
+      .progress-subtitle {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .summary {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        color: var(--muted);
+      }
+
+      .xp-card {
+        display: grid;
+        gap: 10px;
+        text-align: left;
+      }
+
+      .xp-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+      }
+
+      .xp-level {
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .xp-points {
+        font-size: 14px;
+        color: var(--muted);
+      }
+
+      .xp-bar {
+        width: 100%;
+        height: 12px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.12);
+        overflow: hidden;
+      }
+
+      .xp-fill {
+        height: 100%;
+        width: 0%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #10b981, #45caff);
+        transition: width 0.3s ease;
+      }
+
+      .xp-note {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .video-card {
+        display: grid;
+        gap: 12px;
+      }
+
+      .video-box {
+        display: grid;
+        gap: 10px;
+        text-align: left;
+      }
+
+      .video-box input {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 12px;
+        font: inherit;
+        background: #fff;
+      }
+
+      .video-box button {
+        border: none;
+        border-radius: 12px;
+        padding: 10px 14px;
+        background: var(--accent-2);
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .video-frame {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        background: #0b0b0b;
+      }
+
+      .video-frame iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+
+      .video-note {
+        font-size: 12px;
+        color: var(--muted);
+        text-align: center;
+      }
+
+      .badge {
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(255, 27, 107, 0.15);
+        color: #b1114c;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      @media (max-width: 1100px) {
+        .tracker {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .task-table {
+          display: block;
+        }
+
+        .task-table thead {
+          display: none;
+        }
+
+        .task-table tbody {
+          display: grid;
+          gap: 12px;
+        }
+
+        .task-table tr {
+          display: grid;
+          gap: 10px;
+          background: var(--card-strong);
+          padding: 12px;
+          border-radius: 14px;
+          border: 1px solid var(--line);
+        }
+
+        .task-table td {
+          border: none;
+          padding: 0;
+          background: none;
+        }
+
+        .task-table tr td:first-child,
+        .task-table tr td:last-child {
+          border-radius: 0;
+          border: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section class="hero" id="hero">
+      <div class="hero-inner">
+        <h1 id="heroText">
+          Organize your tasks, build habits, and keep moving forward in one simple space.
+        </h1>
+        <div class="hero-hint">Scroll to enter your dashboard</div>
+      </div>
+    </section>
+
+    <div class="app" id="app">
+      <header>
+        <div>
+          <h1>My Dashboard</h1>
+          <p>The Secret to Completing Something Is Tracking It</p>
+        </div>
+        <nav class="nav" aria-label="Primary">
+          <button id="navPrimary" type="button">Habit Tracker</button>
+          <button id="logoutBtn" class="secondary" type="button">Logout</button>
+        </nav>
+      </header>
+
+      <section class="tracker" id="taskPage">
+        <div class="left-stack">
+          <div class="card">
+            <div class="task-header">
+              <div class="xp-card">
+                <div class="xp-head">
+                  <div class="xp-level" id="levelLabel">Level 1</div>
+                  <div class="xp-points" id="xpLabel">0.0 XP</div>
+                </div>
+                <div class="xp-bar">
+                  <div class="xp-fill" id="xpFill"></div>
+                </div>
+                <div class="xp-note" id="xpNote">Complete tasks to gain XP.</div>
+              </div>
+              <div class="mini-progress">
+                <div class="mini-ring">
+                  <svg width="70" height="70" viewBox="0 0 70 70" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="ringGradient" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#ff1b6b" />
+                        <stop offset="100%" stop-color="#45caff" />
+                      </linearGradient>
+                    </defs>
+                    <circle
+                      cx="35"
+                      cy="35"
+                      r="28"
+                      stroke="rgba(15, 23, 42, 0.12)"
+                      stroke-width="8"
+                      fill="none"
+                    />
+                    <circle
+                      id="miniProgressCircle"
+                      cx="35"
+                      cy="35"
+                      r="28"
+                      stroke="url(#ringGradient)"
+                      stroke-width="8"
+                      stroke-linecap="round"
+                      fill="none"
+                      stroke-dasharray="0 176"
+                    />
+                  </svg>
+                  <div class="mini-ring-value" id="miniProgressValue">0%</div>
+                </div>
+                <div class="mini-summary" id="miniSummary">0 / 0 done</div>
+              </div>
+            </div>
+            <h2>Task List</h2>
+            <div class="add-task">
+              <label for="taskName">New task</label>
+              <input id="taskName" type="text" placeholder="e.g. Prep client report" />
+              <button id="addTaskBtn" type="button">Add Task</button>
+            </div>
+
+            <div id="taskContainer"></div>
+          </div>
+
+          <div class="bottom-row">
+            <div class="card">
+              <h2>History</h2>
+              <div class="history" id="historyBox">
+                <div class="empty">No completed sessions yet.</div>
+              </div>
+              <div class="help-text">Deleting your history will reset your level.</div>
+            </div>
+
+            <div class="card calendar">
+              <div class="calendar-head">
+                <div class="calendar-title" id="calendarTitle">Month</div>
+              </div>
+              <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="progress-stack">
+          <div class="card timer-card">
+            <h2>Timer</h2>
+            <div class="timer-display" id="timerDisplay">25:00</div>
+            <div class="timer-adjust">
+              <button type="button" data-adjust="30">+0:30</button>
+              <button type="button" data-adjust="60">+1:00</button>
+              <button type="button" data-adjust="300">+5:00</button>
+              <button type="button" data-adjust="-30">-0:30</button>
+              <button type="button" data-adjust="-60">-1:00</button>
+            </div>
+            <div class="timer-controls">
+              <button id="startBtn" class="timer-icon" type="button" aria-label="Start">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="currentColor" d="M8 5v14l11-7z" />
+                </svg>
+              </button>
+              <button id="pauseBtn" class="timer-icon" type="button" aria-label="Pause">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="currentColor" d="M7 5h4v14H7zM13 5h4v14h-4z" />
+                </svg>
+              </button>
+              <button id="resetBtn" class="timer-icon" type="button" aria-label="Reset">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    fill="currentColor"
+                    d="M12 5a7 7 0 1 1-6.2 3.8H3l3.5-3.5L10 8.8H7.9A5 5 0 1 0 12 7v-2Z"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div class="help-text">
+              Starting the timer means you’ll need to focus on a task. You can pause if the Shopee
+              delivery calls you.
+            </div>
+          </div>
+
+          <div class="card video-card">
+            <h2>Focus Video</h2>
+            <div class="video-box">
+              <input id="youtubeInput" type="text" placeholder="Paste a YouTube link" />
+              <button id="youtubeSaveBtn" type="button">Set Video</button>
+              <div class="video-frame">
+                <iframe
+                  id="youtubeFrame"
+                  title="YouTube player"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                ></iframe>
+              </div>
+              <div class="video-note" id="youtubeStatus">Paste a link to load a video.</div>
+            </div>
+            <div class="help-text">Look for lofi music on YouTube and paste the link here.</div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="tracker" id="habitPage" style="display:none;">
+        <div class="card">
+          <div class="task-header">
+            <div class="xp-card">
+              <div class="xp-head">
+                <div class="xp-level" id="habitLevelLabel">Level 1</div>
+                <div class="xp-points" id="habitXpLabel">0.0 XP</div>
+              </div>
+              <div class="xp-bar">
+                <div class="xp-fill" id="habitXpFill"></div>
+              </div>
+              <div class="xp-note" id="habitXpNote">Complete habits to gain XP.</div>
+            </div>
+            <div class="mini-progress">
+              <div class="mini-ring">
+                <svg width="70" height="70" viewBox="0 0 70 70" aria-hidden="true">
+                  <circle
+                    cx="35"
+                    cy="35"
+                    r="28"
+                    stroke="rgba(15, 23, 42, 0.12)"
+                    stroke-width="8"
+                    fill="none"
+                  />
+                  <circle
+                    id="habitMiniProgressCircle"
+                    cx="35"
+                    cy="35"
+                    r="28"
+                    stroke="url(#ringGradient)"
+                    stroke-width="8"
+                    stroke-linecap="round"
+                    fill="none"
+                    stroke-dasharray="0 176"
+                  />
+                </svg>
+                <div class="mini-ring-value" id="habitMiniProgressValue">0%</div>
+              </div>
+              <div class="mini-summary" id="habitMiniSummary">0 / 0 done</div>
+            </div>
+          </div>
+          <h2>Habit Tracker</h2>
+          <div class="habit-grid" id="habitContainer"></div>
+        </div>
+        <div class="card calendar habit-calendar">
+          <div class="calendar-head">
+            <div class="calendar-title" id="habitCalendarTitle">Month</div>
+          </div>
+          <div class="year-grid" id="habitCalendarGrid"></div>
+        </div>
+      </section>
+
+      <footer>
+        Created by Romer Amargo. This is a beta version. If you find any bugs or issues, please email
+        me at romeramargo@gmail.com.
+      </footer>
+    </div>
+
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+      const taskNameInput = document.getElementById("taskName");
+      const addTaskBtn = document.getElementById("addTaskBtn");
+      const taskContainer = document.getElementById("taskContainer");
+      const hero = document.getElementById("hero");
+      const heroText = document.getElementById("heroText");
+      const app = document.getElementById("app");
+      const miniProgressCircle = document.getElementById("miniProgressCircle");
+      const miniProgressValue = document.getElementById("miniProgressValue");
+      const miniSummary = document.getElementById("miniSummary");
+      const levelLabel = document.getElementById("levelLabel");
+      const xpLabel = document.getElementById("xpLabel");
+      const xpFill = document.getElementById("xpFill");
+      const xpNote = document.getElementById("xpNote");
+      const historyBox = document.getElementById("historyBox");
+      const calendarTitle = document.getElementById("calendarTitle");
+      const calendarGrid = document.getElementById("calendarGrid");
+      const habitCalendarTitle = document.getElementById("habitCalendarTitle");
+      const habitCalendarGrid = document.getElementById("habitCalendarGrid");
+      const timerDisplay = document.getElementById("timerDisplay");
+      const timerAdjustButtons = document.querySelectorAll("[data-adjust]");
+      const startBtn = document.getElementById("startBtn");
+      const pauseBtn = document.getElementById("pauseBtn");
+      const resetBtn = document.getElementById("resetBtn");
+      const youtubeInput = document.getElementById("youtubeInput");
+      const youtubeSaveBtn = document.getElementById("youtubeSaveBtn");
+      const youtubeFrame = document.getElementById("youtubeFrame");
+      const youtubeStatus = document.getElementById("youtubeStatus");
+      const navPrimary = document.getElementById("navPrimary");
+      const taskPage = document.getElementById("taskPage");
+      const habitPage = document.getElementById("habitPage");
+      const habitContainer = document.getElementById("habitContainer");
+      const habitLevelLabel = document.getElementById("habitLevelLabel");
+      const habitXpLabel = document.getElementById("habitXpLabel");
+      const habitXpFill = document.getElementById("habitXpFill");
+      const habitXpNote = document.getElementById("habitXpNote");
+      const habitMiniProgressCircle = document.getElementById("habitMiniProgressCircle");
+      const habitMiniProgressValue = document.getElementById("habitMiniProgressValue");
+      const habitMiniSummary = document.getElementById("habitMiniSummary");
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      const storageKey = "taskTrackerList";
+
+      const statusOptions = ["In progress", "For review", "Skip", "Done"];
+      const priorityOptions = ["Urgent", "High", "Priority", "Normal", "Low"];
+
+      let tasks = [];
+      let history = [];
+      let isAutoResetting = false;
+      let habits = [];
+      let timerInterval = null;
+      let totalSeconds = 1500;
+      let remainingSeconds = 1500;
+
+      const saveState = () => {
+        localStorage.setItem(storageKey, JSON.stringify({ tasks, history, habits }));
+      };
+
+      const loadState = () => {
+        const raw = localStorage.getItem(storageKey);
+        if (!raw) return;
+        try {
+          const payload = JSON.parse(raw);
+          if (Array.isArray(payload)) {
+            tasks = payload;
+            history = [];
+          } else {
+            if (Array.isArray(payload.tasks)) tasks = payload.tasks;
+            if (Array.isArray(payload.history)) history = payload.history;
+            if (Array.isArray(payload.habits)) habits = payload.habits;
+          }
+        } catch (err) {
+          tasks = [];
+          history = [];
+          habits = [];
+        }
+      };
+
+      const getHistoryCompleted = () =>
+        history.reduce(
+          (sum, entry) => sum + (Number.isFinite(entry.completedCount) ? entry.completedCount : entry.tasks.length),
+          0
+        );
+
+      const updateProgress = () => {
+        const total = tasks.length;
+        const completed = tasks.filter((task) => task.completed).length;
+        const percent = total ? Math.round((completed / total) * 100) : 0;
+
+        const circumference = 2 * Math.PI * 28;
+        const filled = total ? (circumference * percent) / 100 : 0;
+        miniProgressCircle.setAttribute("stroke-dasharray", `${filled} ${circumference - filled}`);
+        miniProgressValue.textContent = `${percent}%`;
+        miniSummary.textContent = `${completed} / ${total} done`;
+
+        if (!total) {
+          miniSummary.textContent = "No tasks yet";
+        }
+
+        const xpPerTask = 0.2;
+        const historyCompleted = getHistoryCompleted();
+        const totalXp = (completed + historyCompleted) * xpPerTask;
+        const level = Math.floor(totalXp / 10) + 1;
+        const progressIntoLevel = totalXp % 10;
+        const levelPercent = (progressIntoLevel / 10) * 100;
+
+        levelLabel.textContent = `Level ${level}`;
+        xpLabel.textContent = `${totalXp.toFixed(1)} XP`;
+        xpFill.style.width = `${levelPercent}%`;
+        xpNote.textContent = ` ${progressIntoLevel.toFixed(1)} / 10 XP to level up`;
+      };
+
+      const renderHistory = () => {
+        historyBox.innerHTML = "";
+        if (!history.length) {
+          const empty = document.createElement("div");
+          empty.className = "empty";
+          empty.textContent = "No completed sessions yet.";
+          historyBox.appendChild(empty);
+          return;
+        }
+
+        history.forEach((entry) => {
+          const item = document.createElement("div");
+          item.className = "history-item";
+
+          const details = document.createElement("details");
+          const summary = document.createElement("summary");
+          const time = new Date(entry.completedAt).toLocaleString();
+          summary.innerHTML = `<span>${entry.title}</span><span class="history-meta">${time}</span>`;
+          details.appendChild(summary);
+
+          const list = document.createElement("ul");
+          list.className = "history-list";
+          entry.tasks.forEach((task) => {
+            const li = document.createElement("li");
+            const startDate = task.dateStarted || "n/a";
+            li.textContent = `${task.name} (${task.status}, ${task.priority}, started ${startDate})`;
+            list.appendChild(li);
+          });
+          details.appendChild(list);
+          item.appendChild(details);
+
+          const actions = document.createElement("div");
+          actions.className = "history-actions";
+          const deleteBtn = document.createElement("button");
+          deleteBtn.type = "button";
+          deleteBtn.className = "history-delete";
+          deleteBtn.setAttribute("aria-label", "Delete history entry");
+          deleteBtn.innerHTML = `
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path
+                fill="currentColor"
+                d="M9 3h6l1 2h4v2h-1l-1.1 13.1a2 2 0 0 1-2 1.9H8.1a2 2 0 0 1-2-1.9L5 7H4V5h4l1-2Zm-1.9 4 1 11h7.8l1-11H7.1ZM10 9h2v8h-2V9Zm4 0h2v8h-2V9Z"
+              />
+            </svg>
+          `;
+          deleteBtn.addEventListener("click", () => {
+            history = history.filter((h) => h.id !== entry.id);
+            saveState();
+            renderHistory();
+          });
+          actions.appendChild(deleteBtn);
+          item.appendChild(actions);
+
+          historyBox.appendChild(item);
+        });
+      };
+
+      const formatDateKey = (date) =>
+        `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+          date.getDate()
+        ).padStart(2, "0")}`;
+
+      const renderCalendar = (titleEl, gridEl, statusMap = null) => {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const startWeekday = (firstDay.getDay() + 6) % 7;
+        const totalDays = lastDay.getDate();
+
+        titleEl.textContent = now.toLocaleDateString(undefined, {
+          month: "long",
+          year: "numeric"
+        });
+
+        const allTasks = [
+          ...tasks,
+          ...history.flatMap((entry) => entry.tasks || [])
+        ].filter((task) => task.dateStarted);
+
+        const taskMap = new Map();
+        allTasks.forEach((task) => {
+          const key = task.dateStarted;
+          if (!taskMap.has(key)) taskMap.set(key, []);
+          taskMap.get(key).push(task);
+        });
+
+        gridEl.innerHTML = "";
+        const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+        weekdays.forEach((day) => {
+          const label = document.createElement("div");
+          label.className = "calendar-weekday";
+          label.textContent = day;
+          gridEl.appendChild(label);
+        });
+
+        for (let i = 0; i < startWeekday; i += 1) {
+          const empty = document.createElement("div");
+          empty.className = "calendar-cell";
+          gridEl.appendChild(empty);
+        }
+
+        for (let day = 1; day <= totalDays; day += 1) {
+          const cell = document.createElement("div");
+          cell.className = "calendar-cell";
+          const dot = document.createElement("div");
+          dot.className = "calendar-dot";
+          const dateKey = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+          if (statusMap && statusMap.has(dateKey)) {
+            const status = statusMap.get(dateKey);
+            dot.classList.add("has-tasks");
+            dot.classList.add(status === "done" ? "done" : "missed");
+            dot.title = status === "done" ? "All habits completed" : "Habits missed";
+          } else {
+            const dayTasks = taskMap.get(dateKey) || [];
+            if (dayTasks.length) {
+              dot.classList.add("has-tasks");
+              const allDone = dayTasks.every((task) => task.completed);
+              dot.classList.add(allDone ? "done" : "missed");
+              dot.title = `${dayTasks.length} task${dayTasks.length === 1 ? "" : "s"} started`;
+            } else {
+              dot.title = "No tasks started";
+            }
+          }
+          cell.appendChild(dot);
+          gridEl.appendChild(cell);
+        }
+      };
+
+      const checkAutoReset = () => {
+        if (isAutoResetting) return;
+        if (!tasks.length) return;
+        const allDone = tasks.every((task) => task.completed);
+        if (!allDone) return;
+
+        const completedCount = tasks.length;
+        isAutoResetting = true;
+        history.unshift({
+          id: crypto.randomUUID(),
+          title: `Completed ${tasks.length} ${tasks.length === 1 ? "task" : "tasks"}`,
+          completedAt: new Date().toISOString(),
+          completedCount,
+          tasks: tasks.map((task) => ({ ...task }))
+        });
+        tasks = [];
+        saveState();
+        render();
+        isAutoResetting = false;
+      };
+
+      const formatTime = (value) => {
+        const minutes = Math.floor(value / 60);
+        const seconds = value % 60;
+        return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+      };
+
+      const updateTimerDisplay = () => {
+        timerDisplay.textContent = formatTime(remainingSeconds);
+      };
+
+      const setDefaultTime = () => {
+        totalSeconds = 1500;
+        remainingSeconds = totalSeconds;
+        updateTimerDisplay();
+      };
+
+      const adjustTime = (deltaSeconds) => {
+        totalSeconds = Math.max(60, totalSeconds + deltaSeconds);
+        remainingSeconds = Math.min(Math.max(0, remainingSeconds + deltaSeconds), totalSeconds);
+        updateTimerDisplay();
+      };
+
+      const tick = () => {
+        if (remainingSeconds <= 0) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          return;
+        }
+        remainingSeconds -= 1;
+        updateTimerDisplay();
+      };
+
+      const startTimer = () => {
+        if (timerInterval) return;
+        if (remainingSeconds <= 0) remainingSeconds = totalSeconds;
+        timerInterval = setInterval(tick, 1000);
+      };
+
+      const pauseTimer = () => {
+        if (!timerInterval) return;
+        clearInterval(timerInterval);
+        timerInterval = null;
+      };
+
+      const resetTimer = () => {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        remainingSeconds = totalSeconds;
+        updateTimerDisplay();
+      };
+
+      const parseYouTubeUrl = (url) => {
+        if (!url) return null;
+        const trimmed = url.trim();
+        if (!trimmed) return null;
+        if (trimmed.includes("youtube.com/embed/")) return trimmed;
+        try {
+          const parsed = new URL(trimmed);
+          const host = parsed.hostname.replace("www.", "");
+          const listId = parsed.searchParams.get("list");
+          const videoId = parsed.searchParams.get("v");
+
+          if (host === "youtu.be") {
+            const id = parsed.pathname.slice(1);
+            return id ? `https://www.youtube.com/embed/${id}` : null;
+          }
+
+          if (host === "youtube.com" || host === "m.youtube.com") {
+            if (parsed.pathname.startsWith("/watch") && videoId) {
+              return `https://www.youtube.com/embed/${videoId}`;
+            }
+            if (parsed.pathname.startsWith("/playlist") && listId) {
+              return `https://www.youtube.com/embed/videoseries?list=${listId}`;
+            }
+            if (parsed.pathname.startsWith("/embed/")) {
+              return trimmed;
+            }
+          }
+
+          if (listId) {
+            return `https://www.youtube.com/embed/videoseries?list=${listId}`;
+          }
+        } catch (err) {
+          return null;
+        }
+        return null;
+      };
+
+      const updateYouTube = () => {
+        const embed = parseYouTubeUrl(youtubeInput.value);
+        if (!embed) {
+          youtubeFrame.removeAttribute("src");
+          youtubeStatus.textContent = "Paste a link to load a video.";
+          return;
+        }
+        youtubeFrame.src = embed;
+        youtubeStatus.textContent = "Video loaded.";
+      };
+
+      const renderTable = () => {
+        if (!tasks.length) {
+          taskContainer.innerHTML = '<div class="empty">No tasks yet. Add your first task.</div>';
+          return;
+        }
+
+        const table = document.createElement("table");
+        table.className = "task-table";
+
+        table.innerHTML = `
+          <thead>
+            <tr>
+              <th>Task</th>
+              <th>Status</th>
+              <th>Priority</th>
+              <th>Date started</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+        `;
+
+        const tbody = document.createElement("tbody");
+
+        tasks.forEach((task) => {
+          const row = document.createElement("tr");
+          if (task.priority) {
+            row.classList.add(`priority-${task.priority.toLowerCase()}`);
+          }
+
+          const nameCell = document.createElement("td");
+          const nameWrap = document.createElement("label");
+          nameWrap.className = `task-name${task.completed ? " completed" : ""}`;
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.checked = task.completed;
+          checkbox.addEventListener("change", () => {
+            task.completed = checkbox.checked;
+            task.status = checkbox.checked ? "Done" : task.status === "Done" ? "In progress" : task.status;
+            saveState();
+            render();
+          });
+          const text = document.createElement("span");
+          text.textContent = task.name;
+          nameWrap.appendChild(checkbox);
+          nameWrap.appendChild(text);
+          nameCell.appendChild(nameWrap);
+
+          const statusCell = document.createElement("td");
+          const statusSelect = document.createElement("select");
+          const statusPlaceholder = document.createElement("option");
+          statusPlaceholder.value = "";
+          statusPlaceholder.textContent = "Select";
+          statusSelect.appendChild(statusPlaceholder);
+          statusOptions.forEach((option) => {
+            const opt = document.createElement("option");
+            opt.value = option;
+            opt.textContent = option;
+            statusSelect.appendChild(opt);
+          });
+          statusSelect.value = task.status || "";
+          statusSelect.addEventListener("change", () => {
+            task.status = statusSelect.value;
+            task.completed = task.status === "Done";
+            saveState();
+            render();
+          });
+          statusCell.appendChild(statusSelect);
+
+          const priorityCell = document.createElement("td");
+          const prioritySelect = document.createElement("select");
+          const priorityPlaceholder = document.createElement("option");
+          priorityPlaceholder.value = "";
+          priorityPlaceholder.textContent = "Select";
+          prioritySelect.appendChild(priorityPlaceholder);
+          priorityOptions.forEach((option) => {
+            const opt = document.createElement("option");
+            opt.value = option;
+            opt.textContent = option;
+            prioritySelect.appendChild(opt);
+          });
+          prioritySelect.value = task.priority || "";
+          prioritySelect.addEventListener("change", () => {
+            task.priority = prioritySelect.value;
+            saveState();
+            render();
+          });
+          priorityCell.appendChild(prioritySelect);
+
+          const startCell = document.createElement("td");
+          const startInput = document.createElement("input");
+          startInput.type = "date";
+          startInput.value = task.dateStarted || "";
+          startInput.addEventListener("change", () => {
+            task.dateStarted = startInput.value;
+            saveState();
+          });
+          startCell.appendChild(startInput);
+
+          const deleteCell = document.createElement("td");
+          const deleteBtn = document.createElement("button");
+          deleteBtn.type = "button";
+          deleteBtn.className = "delete-btn";
+          deleteBtn.setAttribute("aria-label", "Delete task");
+          deleteBtn.innerHTML = `
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path
+                fill="currentColor"
+                d="M9 3h6l1 2h4v2h-1l-1.1 13.1a2 2 0 0 1-2 1.9H8.1a2 2 0 0 1-2-1.9L5 7H4V5h4l1-2Zm-1.9 4 1 11h7.8l1-11H7.1ZM10 9h2v8h-2V9Zm4 0h2v8h-2V9Z"
+              />
+            </svg>
+          `;
+          deleteBtn.addEventListener("click", () => {
+            tasks = tasks.filter((item) => item.id !== task.id);
+            saveState();
+            render();
+          });
+          deleteCell.appendChild(deleteBtn);
+
+          row.appendChild(nameCell);
+          row.appendChild(statusCell);
+          row.appendChild(priorityCell);
+          row.appendChild(startCell);
+          row.appendChild(deleteCell);
+
+          tbody.appendChild(row);
+        });
+
+        table.appendChild(tbody);
+        taskContainer.innerHTML = "";
+        taskContainer.appendChild(table);
+      };
+
+      const addTask = () => {
+        const name = taskNameInput.value.trim();
+        if (!name) {
+          taskNameInput.focus();
+          return;
+        }
+
+        tasks.push({
+          id: crypto.randomUUID(),
+          name,
+          completed: false,
+          status: "",
+          priority: "",
+          dateStarted: ""
+        });
+
+        taskNameInput.value = "";
+        saveState();
+        render();
+      };
+
+      const render = () => {
+        renderTable();
+        updateProgress();
+        renderHistory();
+        renderCalendar(calendarTitle, calendarGrid);
+        checkAutoReset();
+      };
+
+      const ensureHabitSlots = () => {
+        if (habits.length) return;
+        habits = Array.from({ length: 10 }, () => ({
+          id: crypto.randomUUID(),
+          name: "",
+          checks: Array.from({ length: 7 }, () => false)
+        }));
+      };
+
+      const renderHabitYearCalendar = (statusMap) => {
+        const now = new Date();
+        const year = now.getFullYear();
+        habitCalendarTitle.textContent = `${year}`;
+        habitCalendarGrid.innerHTML = "";
+
+        for (let month = 0; month < 12; month += 1) {
+          const monthBlock = document.createElement("div");
+          monthBlock.className = "month-block";
+
+          const title = document.createElement("div");
+          title.className = "month-title";
+          title.textContent = new Date(year, month, 1).toLocaleDateString(undefined, {
+            month: "short"
+          });
+          monthBlock.appendChild(title);
+
+          const grid = document.createElement("div");
+          grid.className = "month-grid";
+
+          const firstDay = new Date(year, month, 1);
+          const lastDay = new Date(year, month + 1, 0);
+          const startWeekday = (firstDay.getDay() + 6) % 7;
+          const totalDays = lastDay.getDate();
+
+          for (let i = 0; i < startWeekday; i += 1) {
+            const blank = document.createElement("div");
+            grid.appendChild(blank);
+          }
+
+          for (let day = 1; day <= totalDays; day += 1) {
+            const dot = document.createElement("div");
+            dot.className = "month-dot";
+            const dateKey = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+            if (statusMap.has(dateKey)) {
+              dot.classList.add(statusMap.get(dateKey));
+            }
+            grid.appendChild(dot);
+          }
+
+          monthBlock.appendChild(grid);
+          habitCalendarGrid.appendChild(monthBlock);
+        }
+      };
+
+      const getWeekDates = () => {
+        const weekStart = new Date();
+        const dayIndex = (weekStart.getDay() + 6) % 7;
+        weekStart.setDate(weekStart.getDate() - dayIndex);
+        weekStart.setHours(0, 0, 0, 0);
+        return Array.from({ length: 7 }, (_, i) => {
+          const date = new Date(weekStart);
+          date.setDate(weekStart.getDate() + i);
+          return date;
+        });
+      };
+
+      const updateHabitMetrics = () => {
+        const weekDates = getWeekDates();
+        const statusMap = new Map();
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        weekDates.forEach((date, idx) => {
+          const namedHabits = habits.filter((habit) => habit.name.trim());
+          if (!namedHabits.length) return;
+          if (date.getTime() > todayStart.getTime()) return;
+          const allDone = namedHabits.every((habit) => habit.checks[idx]);
+          statusMap.set(formatDateKey(date), allDone ? "done" : "missed");
+        });
+
+        const namedHabits = habits.filter((habit) => habit.name.trim());
+        const totalChecks = namedHabits.length * 7;
+        const completedChecks = namedHabits.reduce(
+          (sum, habit) => sum + habit.checks.filter(Boolean).length,
+          0
+        );
+        const percent = totalChecks ? Math.round((completedChecks / totalChecks) * 100) : 0;
+        const circumference = 2 * Math.PI * 28;
+        const filled = totalChecks ? (circumference * percent) / 100 : 0;
+        habitMiniProgressCircle.setAttribute(
+          "stroke-dasharray",
+          `${filled} ${circumference - filled}`
+        );
+        habitMiniProgressValue.textContent = `${percent}%`;
+        habitMiniSummary.textContent = totalChecks ? `${completedChecks} / ${totalChecks} done` : "No habits yet";
+
+        const xpPerCheck = 0.2;
+        const totalXp = completedChecks * xpPerCheck;
+        const level = Math.floor(totalXp / 10) + 1;
+        const progressIntoLevel = totalXp % 10;
+        const levelPercent = (progressIntoLevel / 10) * 100;
+        habitLevelLabel.textContent = `Level ${level}`;
+        habitXpLabel.textContent = `${totalXp.toFixed(1)} XP`;
+        habitXpFill.style.width = `${levelPercent}%`;
+        habitXpNote.textContent = `${progressIntoLevel.toFixed(1)} / 10 XP to level up`;
+
+        renderHabitYearCalendar(statusMap);
+      };
+
+      const renderHabits = () => {
+        if (!habitContainer) return;
+        ensureHabitSlots();
+        habitContainer.innerHTML = "";
+
+        const head = document.createElement("div");
+        head.className = "habit-head";
+        const weekDates = getWeekDates();
+        head.innerHTML = `<div>Habit</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>`;
+        habitContainer.appendChild(head);
+
+        const datesRow = document.createElement("div");
+        datesRow.className = "habit-head";
+        datesRow.innerHTML =
+          `<div></div>` +
+          weekDates
+            .map((date) => date.toLocaleDateString(undefined, { month: "short", day: "numeric" }))
+            .map((label) => `<div class="habit-date">${label}</div>`)
+            .join("");
+        habitContainer.appendChild(datesRow);
+
+        habits.forEach((habit, index) => {
+          const row = document.createElement("div");
+          row.className = "habit-row";
+
+          const input = document.createElement("input");
+          input.type = "text";
+          input.placeholder = "Type habit...";
+          input.value = habit.name;
+          input.addEventListener("input", () => {
+            habit.name = input.value;
+            saveState();
+            updateRowState();
+            updateHabitMetrics();
+          });
+          row.appendChild(input);
+
+          habit.checks.forEach((checked, dayIndex) => {
+            const dot = document.createElement("button");
+            dot.type = "button";
+            const dayDate = weekDates[dayIndex];
+            dot.className = `habit-dot${checked ? " done" : ""}`;
+            dot.setAttribute("aria-label", "Toggle habit");
+            dot.addEventListener("click", () => {
+              habit.checks[dayIndex] = !habit.checks[dayIndex];
+              saveState();
+              renderHabits();
+            });
+            row.appendChild(dot);
+          });
+
+          const updateRowState = () => {
+            const todayStart = new Date();
+            todayStart.setHours(0, 0, 0, 0);
+            const dots = row.querySelectorAll(".habit-dot");
+            dots.forEach((dot, idx) => {
+              const dayDate = weekDates[idx];
+              const isPast = dayDate && dayDate.getTime() < todayStart.getTime();
+              const checked = habit.checks[idx];
+              const isMissed = habit.name.trim() && !checked && isPast;
+              dot.classList.toggle("done", checked);
+              dot.classList.toggle("missed", isMissed);
+              dot.disabled = !habit.name.trim();
+            });
+          };
+
+          updateRowState();
+          habitContainer.appendChild(row);
+        });
+
+        updateHabitMetrics();
+      };
+
+      const showPage = (page) => {
+        const showTask = page === "task";
+        taskPage.style.display = showTask ? "grid" : "none";
+        habitPage.style.display = showTask ? "none" : "grid";
+        navPrimary.textContent = showTask ? "Habit Tracker" : "Task Tracker";
+      };
+
+      addTaskBtn.addEventListener("click", addTask);
+      taskNameInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          addTask();
+        }
+      });
+
+      const updateHeroOnScroll = () => {
+        if (!hero || !heroText) return;
+        const height = hero.offsetHeight || 1;
+        const progress = Math.min(1, Math.max(0, window.scrollY / height));
+        heroText.style.opacity = `${1 - progress}`;
+        heroText.style.filter = `blur(${progress * 10}px)`;
+        heroText.style.transform = `translateY(${progress * 24}px)`;
+        if (app) {
+          app.style.opacity = `${progress}`;
+          app.style.transform = `translateY(${(1 - progress) * 24}px)`;
+          app.style.filter = `blur(${(1 - progress) * 6}px)`;
+        }
+        if (progress >= 1) {
+          document.body.classList.add("hero-hidden");
+        } else {
+          document.body.classList.remove("hero-hidden");
+        }
+      };
+
+      window.addEventListener("scroll", updateHeroOnScroll, { passive: true });
+
+      startBtn.addEventListener("click", startTimer);
+      pauseBtn.addEventListener("click", pauseTimer);
+      resetBtn.addEventListener("click", resetTimer);
+      timerAdjustButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const delta = Number(button.dataset.adjust);
+          if (!Number.isNaN(delta)) adjustTime(delta);
+        });
+      });
+
+      navPrimary.addEventListener("click", () => {
+        const next = taskPage.style.display === "none" ? "task" : "habit";
+        showPage(next);
+      });
+
+      const redirectToLogin = () => {
+        const hash = window.location.hash || "";
+        window.location.href = `/login${hash}`;
+      };
+
+      const requireAuth = async () => {
+        try {
+          const response = await fetch("/.netlify/identity/user", {
+            credentials: "include"
+          });
+          if (!response.ok) {
+            redirectToLogin();
+          }
+        } catch (err) {
+          redirectToLogin();
+        }
+      };
+
+      requireAuth();
+
+      logoutBtn.addEventListener("click", async () => {
+        try {
+          await fetch("/.netlify/identity/logout", { method: "POST", credentials: "include" });
+          await fetch("/.netlify/functions/clear-cookie", { method: "POST" });
+        } catch (err) {
+          // ignore
+        }
+        redirectToLogin();
+      });
+
+
+      youtubeSaveBtn.addEventListener("click", updateYouTube);
+      youtubeInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          updateYouTube();
+        }
+      });
+
+      loadState();
+      render();
+      renderHabits();
+      updateYouTube();
+      setDefaultTime();
+      updateHeroOnScroll();
+      showPage("task");
+    </script>
+  </body>
+</html>

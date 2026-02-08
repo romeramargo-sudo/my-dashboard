@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login · My Dashboard</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="favicon.svg" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
+      :root {
+        --bg-left: #000328;
+        --bg-right: #00458e;
+        --card: #ffffff;
+        --ink: #0f172a;
+        --muted: #5b667a;
+        --accent: #00458e;
+        --shadow: rgba(15, 23, 42, 0.25);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Poppins", system-ui, sans-serif;
+        background: linear-gradient(120deg, var(--bg-left), var(--bg-right));
+        color: var(--ink);
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+      .card {
+        background: var(--card);
+        border-radius: 20px;
+        padding: 28px;
+        width: min(420px, 100%);
+        box-shadow: 0 20px 50px -30px var(--shadow);
+        text-align: center;
+      }
+      h1 {
+        margin: 0 0 12px;
+        font-size: 28px;
+      }
+      p {
+        margin: 0 0 16px;
+        color: var(--muted);
+      }
+      form {
+        display: grid;
+        gap: 12px;
+        margin-top: 12px;
+      }
+      label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted);
+        text-align: left;
+      }
+      input {
+        width: 100%;
+        border: 1px solid rgba(15, 23, 42, 0.2);
+        border-radius: 12px;
+        padding: 10px 12px;
+        font: inherit;
+        background: #fff;
+      }
+      button {
+        font: inherit;
+        border: none;
+        border-radius: 999px;
+        padding: 12px 18px;
+        cursor: pointer;
+        background: var(--accent);
+        color: #fff;
+        font-weight: 600;
+        width: 100%;
+        margin-top: 4px;
+      }
+      .link {
+        background: none;
+        border: none;
+        color: var(--accent);
+        text-decoration: underline;
+        cursor: pointer;
+        font-size: 13px;
+      }
+      .note {
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 12px;
+      }
+      .error {
+        color: #b91c1c;
+        font-size: 13px;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1 id="title">Welcome</h1>
+      <p id="subtitle">Please log in to access your dashboard.</p>
+
+      <form id="loginForm">
+        <div>
+          <label for="loginEmail">Email</label>
+          <input id="loginEmail" type="email" autocomplete="email" required />
+        </div>
+        <div>
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" type="password" autocomplete="current-password" required />
+        </div>
+        <button type="submit">Log In</button>
+      </form>
+
+      <form id="signupForm" class="hidden">
+        <div>
+          <label for="signupEmail">Email</label>
+          <input id="signupEmail" type="email" autocomplete="email" required />
+        </div>
+        <div>
+          <label for="signupPassword">Set Password</label>
+          <input id="signupPassword" type="password" autocomplete="new-password" required />
+        </div>
+        <button type="submit">Set Password</button>
+      </form>
+
+      <form id="recoverForm" class="hidden">
+        <div>
+          <label for="recoverEmail">Email</label>
+          <input id="recoverEmail" type="email" autocomplete="email" required />
+        </div>
+        <button type="submit">Send Recovery Email</button>
+      </form>
+
+      <button id="forgotBtn" type="button" class="link">Forgot password?</button>
+      <button id="inviteBtn" type="button" class="link">Have an invite? Set password</button>
+      <p class="note" id="authMessage">Invite only. If you do not have an invite, ask the site owner.</p>
+      <p class="error" id="errorMessage"></p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gotrue-js@1.6.2/dist/gotrue.min.js"></script>
+    <script>
+      const title = document.getElementById("title");
+      const subtitle = document.getElementById("subtitle");
+      const loginForm = document.getElementById("loginForm");
+      const signupForm = document.getElementById("signupForm");
+      const recoverForm = document.getElementById("recoverForm");
+      const forgotBtn = document.getElementById("forgotBtn");
+      const inviteBtn = document.getElementById("inviteBtn");
+      const authMessage = document.getElementById("authMessage");
+      const errorMessage = document.getElementById("errorMessage");
+
+      const loginEmail = document.getElementById("loginEmail");
+      const loginPassword = document.getElementById("loginPassword");
+      const signupEmail = document.getElementById("signupEmail");
+      const signupPassword = document.getElementById("signupPassword");
+      const recoverEmail = document.getElementById("recoverEmail");
+
+      const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+      const inviteToken =
+        hashParams.get("invite_token") ||
+        hashParams.get("confirmation_token") ||
+        hashParams.get("token");
+
+      const showLogin = () => {
+        title.textContent = "Welcome";
+        subtitle.textContent = "Please log in to access your dashboard.";
+        loginForm.classList.remove("hidden");
+        signupForm.classList.add("hidden");
+        recoverForm.classList.add("hidden");
+      };
+
+      const showSignup = () => {
+        title.textContent = "Set your password";
+        subtitle.textContent = "Complete your invite to access the dashboard.";
+        loginForm.classList.add("hidden");
+        signupForm.classList.remove("hidden");
+        recoverForm.classList.add("hidden");
+      };
+
+      const showRecover = () => {
+        title.textContent = "Reset password";
+        subtitle.textContent = "We will send you a recovery email.";
+        loginForm.classList.add("hidden");
+        signupForm.classList.add("hidden");
+        recoverForm.classList.remove("hidden");
+      };
+
+      const setError = (message) => {
+        errorMessage.textContent = message || "";
+      };
+
+      const auth = new GoTrue({
+        APIUrl: `${window.location.origin}/.netlify/identity`,
+        setCookie: false
+      });
+
+      const getToken = (user) =>
+        user?.token?.access_token || user?.token?.token || user?.token || user?.access_token;
+
+      const setServerCookie = async (token) => {
+        if (!token) return;
+        await fetch("/.netlify/functions/set-cookie", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token })
+        });
+      };
+
+      const goDashboard = () => {
+        window.location.replace("/");
+      };
+
+      if (inviteToken) {
+        showSignup();
+      } else {
+        showLogin();
+      }
+
+      forgotBtn.addEventListener("click", () => {
+        showRecover();
+        setError("");
+      });
+
+      inviteBtn.addEventListener("click", () => {
+        showSignup();
+        setError("");
+      });
+
+      loginForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        setError("");
+        try {
+          const user = await auth.login(loginEmail.value, loginPassword.value, true);
+          await setServerCookie(getToken(user));
+          setTimeout(goDashboard, 150);
+        } catch (err) {
+          setError("Login failed. Check your email and password.");
+        }
+      });
+
+      signupForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        setError("");
+        try {
+          const user = await auth.signup(signupEmail.value, signupPassword.value, {
+            invite_token: inviteToken
+          });
+          await setServerCookie(getToken(user));
+          setTimeout(goDashboard, 150);
+        } catch (err) {
+          setError("Unable to set password. Make sure you used the invite link.");
+        }
+      });
+
+      recoverForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        setError("");
+        try {
+          await auth.requestPasswordRecovery(recoverEmail.value);
+          authMessage.textContent = "Recovery email sent. Check your inbox.";
+          showLogin();
+        } catch (err) {
+          setError("Recovery failed. Check your email and try again.");
+        }
+      });
+    </script>
+  </body>
+</html>
