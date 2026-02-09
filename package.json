@@ -1,0 +1,9 @@
+{
+  "name": "habitask",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Habitask dashboard",
+  "dependencies": {
+    "pg": "^8.11.5"
+  }
+}
