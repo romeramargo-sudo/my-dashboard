@@ -715,12 +715,16 @@
         transform: rotate(-90deg);
       }
 
+      .timer-ring circle {
+        transition: stroke-dasharray 0.4s linear;
+      }
+
       .timer-display {
         position: absolute;
         inset: 0;
         display: grid;
         place-items: center;
-        font-size: 42px;
+        font-size: 34px;
         font-weight: 700;
         letter-spacing: 0.08em;
       }
@@ -1219,6 +1223,7 @@
       let timerInterval = null;
       let totalSeconds = 1500;
       let remainingSeconds = 1500;
+      let autoResetTimeout = null;
       let saveTimeout = null;
 
       const getUserToken = () =>
@@ -1455,21 +1460,35 @@
         if (isAutoResetting) return;
         if (!tasks.length) return;
         const allDone = tasks.every((task) => task.completed);
-        if (!allDone) return;
+        if (!allDone) {
+          if (autoResetTimeout) {
+            clearTimeout(autoResetTimeout);
+            autoResetTimeout = null;
+          }
+          return;
+        }
 
-        const completedCount = tasks.length;
-        isAutoResetting = true;
-        history.unshift({
-          id: crypto.randomUUID(),
-          title: `Completed ${tasks.length} ${tasks.length === 1 ? "task" : "tasks"}`,
-          completedAt: new Date().toISOString(),
-          completedCount,
-          tasks: tasks.map((task) => ({ ...task }))
-        });
-        tasks = [];
-        saveState();
-        render();
-        isAutoResetting = false;
+        if (autoResetTimeout) return;
+        autoResetTimeout = setTimeout(() => {
+          if (!tasks.length || !tasks.every((task) => task.completed)) {
+            autoResetTimeout = null;
+            return;
+          }
+          const completedCount = tasks.length;
+          isAutoResetting = true;
+          history.unshift({
+            id: crypto.randomUUID(),
+            title: `Completed ${tasks.length} ${tasks.length === 1 ? "task" : "tasks"}`,
+            completedAt: new Date().toISOString(),
+            completedCount,
+            tasks: tasks.map((task) => ({ ...task }))
+          });
+          tasks = [];
+          saveState();
+          render();
+          isAutoResetting = false;
+          autoResetTimeout = null;
+        }, 10000);
       };
 
       const formatTime = (value) => {
