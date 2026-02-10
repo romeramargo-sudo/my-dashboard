@@ -704,22 +704,37 @@
         align-content: start;
       }
 
+      .timer-ring {
+        width: 180px;
+        height: 180px;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      .timer-ring svg {
+        transform: rotate(-90deg);
+      }
+
       .timer-display {
-        font-size: 48px;
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        font-size: 42px;
         font-weight: 700;
         letter-spacing: 0.08em;
       }
 
       .timer-adjust {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 8px;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
       }
 
       .timer-adjust button {
         border: 1px solid var(--line);
         border-radius: 999px;
-        padding: 8px 10px;
+        padding: 8px 16px;
         background: #fff;
         font-weight: 600;
         cursor: pointer;
@@ -1007,13 +1022,33 @@
         <aside class="progress-stack">
           <div class="card timer-card">
             <h2>Timer</h2>
-            <div class="timer-display" id="timerDisplay">25:00</div>
+            <div class="timer-ring">
+              <svg width="180" height="180" viewBox="0 0 180 180" aria-hidden="true">
+                <circle
+                  cx="90"
+                  cy="90"
+                  r="72"
+                  stroke="rgba(15, 23, 42, 0.12)"
+                  stroke-width="12"
+                  fill="none"
+                />
+                <circle
+                  id="timerCircle"
+                  cx="90"
+                  cy="90"
+                  r="72"
+                  stroke="url(#ringGradient)"
+                  stroke-width="12"
+                  stroke-linecap="round"
+                  fill="none"
+                  stroke-dasharray="0 452"
+                />
+              </svg>
+              <div class="timer-display" id="timerDisplay">25:00</div>
+            </div>
             <div class="timer-adjust">
-              <button type="button" data-adjust="30">+0:30</button>
-              <button type="button" data-adjust="60">+1:00</button>
-              <button type="button" data-adjust="300">+5:00</button>
-              <button type="button" data-adjust="-30">-0:30</button>
-              <button type="button" data-adjust="-60">-1:00</button>
+              <button type="button" data-adjust="300">+5 min</button>
+              <button type="button" data-adjust="-300">-5 min</button>
             </div>
             <div class="timer-controls">
               <button id="startBtn" class="timer-icon" type="button" aria-label="Start">
@@ -1148,6 +1183,7 @@
       const habitCalendarTitle = document.getElementById("habitCalendarTitle");
       const habitCalendarGrid = document.getElementById("habitCalendarGrid");
       const timerDisplay = document.getElementById("timerDisplay");
+      const timerCircle = document.getElementById("timerCircle");
       const timerAdjustButtons = document.querySelectorAll("[data-adjust]");
       const startBtn = document.getElementById("startBtn");
       const pauseBtn = document.getElementById("pauseBtn");
@@ -1444,6 +1480,10 @@
 
       const updateTimerDisplay = () => {
         timerDisplay.textContent = formatTime(remainingSeconds);
+        const circumference = 2 * Math.PI * 72;
+        const progress = totalSeconds ? remainingSeconds / totalSeconds : 0;
+        const filled = circumference * progress;
+        timerCircle.setAttribute("stroke-dasharray", `${filled} ${circumference - filled}`);
       };
 
       const setDefaultTime = () => {
