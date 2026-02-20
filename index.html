@@ -1228,7 +1228,7 @@
       let timerInterval = null;
       let totalSeconds = 1500;
       let remainingSeconds = 1500;
-      let autoResetTimeout = null;
+      let autoResetTimeouts = new Map();
       let saveTimeout = null;
 
       const getUserToken = () =>
@@ -1461,39 +1461,74 @@
         }
       };
 
+      const getTaskDateKey = (task) => task.dateStarted || "__no_date";
+
       const checkAutoReset = () => {
         if (isAutoResetting) return;
-        if (!tasks.length) return;
-        const allDone = tasks.every((task) => task.completed);
-        if (!allDone) {
-          if (autoResetTimeout) {
-            clearTimeout(autoResetTimeout);
-            autoResetTimeout = null;
-          }
+        if (!tasks.length) {
+          autoResetTimeouts.forEach((timeoutId) => clearTimeout(timeoutId));
+          autoResetTimeouts.clear();
           return;
         }
 
-        if (autoResetTimeout) return;
-        autoResetTimeout = setTimeout(() => {
-          if (!tasks.length || !tasks.every((task) => task.completed)) {
-            autoResetTimeout = null;
+        const groups = new Map();
+        tasks.forEach((task) => {
+          const key = getTaskDateKey(task);
+          if (!groups.has(key)) groups.set(key, []);
+          groups.get(key).push(task);
+        });
+
+        // Clear timers for date groups that no longer exist.
+        autoResetTimeouts.forEach((timeoutId, key) => {
+          if (!groups.has(key)) {
+            clearTimeout(timeoutId);
+            autoResetTimeouts.delete(key);
+          }
+        });
+
+        groups.forEach((groupTasks, key) => {
+          const allDoneForDate = groupTasks.every((task) => task.completed);
+          if (!allDoneForDate) {
+            if (autoResetTimeouts.has(key)) {
+              clearTimeout(autoResetTimeouts.get(key));
+              autoResetTimeouts.delete(key);
+            }
             return;
           }
-          const completedCount = tasks.length;
-          isAutoResetting = true;
-          history.unshift({
-            id: crypto.randomUUID(),
-            title: `Completed ${tasks.length} ${tasks.length === 1 ? "task" : "tasks"}`,
-            completedAt: new Date().toISOString(),
-            completedCount,
-            tasks: tasks.map((task) => ({ ...task }))
-          });
-          tasks = [];
-          saveState();
-          render();
-          isAutoResetting = false;
-          autoResetTimeout = null;
-        }, 10000);
+
+          if (autoResetTimeouts.has(key)) return;
+          const timeoutId = setTimeout(() => {
+            const remainingGroup = tasks.filter((task) => getTaskDateKey(task) === key);
+            if (!remainingGroup.length || !remainingGroup.every((task) => task.completed)) {
+              autoResetTimeouts.delete(key);
+              return;
+            }
+
+            isAutoResetting = true;
+            const completedCount = remainingGroup.length;
+            const dateLabel =
+              key === "__no_date"
+                ? "No date"
+                : new Date(`${key}T00:00:00`).toLocaleDateString(undefined, {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric"
+                  });
+            history.unshift({
+              id: crypto.randomUUID(),
+              title: `Completed ${completedCount} ${completedCount === 1 ? "task" : "tasks"} (${dateLabel})`,
+              completedAt: new Date().toISOString(),
+              completedCount,
+              tasks: remainingGroup.map((task) => ({ ...task }))
+            });
+            tasks = tasks.filter((task) => getTaskDateKey(task) !== key);
+            autoResetTimeouts.delete(key);
+            saveState();
+            isAutoResetting = false;
+            render();
+          }, 10000);
+          autoResetTimeouts.set(key, timeoutId);
+        });
       };
 
       const formatTime = (value) => {
