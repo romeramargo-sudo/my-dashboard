@@ -27,6 +27,11 @@
         --shadow: rgba(15, 23, 42, 0.18);
       }
 
+      body.theme-female {
+        --bg-left: #f5e6ad;
+        --bg-right: #f13c77;
+      }
+
       * {
         box-sizing: border-box;
       }
@@ -102,6 +107,15 @@
         display: flex;
         gap: 10px;
         align-items: center;
+      }
+
+      .theme-toggle {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.55);
+        cursor: pointer;
+        background: linear-gradient(120deg, #f5e6ad, #f13c77);
       }
 
       .nav button {
@@ -947,6 +961,7 @@
           <p>The Secret to Completing Something Is Tracking It</p>
         </div>
         <nav class="nav" aria-label="Primary">
+          <button id="themeToggle" class="theme-toggle" type="button" aria-label="Change theme"></button>
           <button id="navPrimary" type="button">Habit Tracker</button>
           <button id="logoutBtn" class="secondary" type="button">Logout</button>
         </nav>
@@ -1215,8 +1230,10 @@
       const logoutBtn = document.getElementById("logoutBtn");
       const loginGate = document.getElementById("loginGate");
       const loginBtn = document.getElementById("loginBtn");
+      const themeToggle = document.getElementById("themeToggle");
 
       const storageKey = "taskTrackerList";
+      const themeStorageKey = "habitaskTheme";
 
       const statusOptions = ["In progress", "For review", "Skip", "Done"];
       const priorityOptions = ["Urgent", "High", "Priority", "Normal", "Low"];
@@ -2105,12 +2122,21 @@
       });
 
       loadState();
+      const savedTheme = localStorage.getItem(themeStorageKey);
+      if (savedTheme === "female") {
+        document.body.classList.add("theme-female");
+      }
       render();
       renderHabits();
       updateYouTube();
       setDefaultTime();
       updateHeroOnScroll();
       showPage("task");
+
+      themeToggle.addEventListener("click", () => {
+        const isFemale = document.body.classList.toggle("theme-female");
+        localStorage.setItem(themeStorageKey, isFemale ? "female" : "male");
+      });
     </script>
   </body>
 </html>
